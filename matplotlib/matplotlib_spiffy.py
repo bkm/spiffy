@@ -24,9 +24,10 @@ def heatmap(ax, data, row_labels, col_labels, symmetric=False):
     ax.set_yticks(np.arange(data.shape[1])+1-.5, minor=True)
     ax.tick_params(which="minor", bottom=False, left=False)
 
-    plt.setp(ax.get_xticklabels(), rotation=45, rotation_mode="anchor")
+    plt.setp(ax.get_xticklabels(), rotation=45, rotation_mode="anchor", ha="right")
 
     txt_formatter = matplotlib.ticker.StrMethodFormatter("{x:.2f}")
+    txt_args = dict(horizontalalignment = "center", verticalalignment = "center")
 
     ax.grid(which="minor", color="w", linestyle="-", linewidth=3)
     for edge, spine in ax.spines.items():
@@ -34,6 +35,6 @@ def heatmap(ax, data, row_labels, col_labels, symmetric=False):
 
     for i in range(size_x):
         for j in range(size_y):
-            im.axes.text(j, i, txt_formatter(data[i, j], None))
+            im.axes.text(j, i, txt_formatter(data[i, j], None), txt_args)
 
     return im
