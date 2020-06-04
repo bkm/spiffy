@@ -5,7 +5,8 @@ import matplotlib
 
 
 def annotate_heatmap(im, data, format_string="{x:.2f}", text_params={}, symmetric=False,
-        get_text_color = None):
+        show_diagonal=True, get_text_color = None):
+
     size_x = data.shape[0]
     size_y = data.shape[1]
 
@@ -15,7 +16,9 @@ def annotate_heatmap(im, data, format_string="{x:.2f}", text_params={}, symmetri
 
     for i in range(size_x):
         for j in range(size_y):
-            if symmetric and j>i:
+            if not show_diagonal and i==j:
+                txt_args["color"] = "white"
+            elif symmetric and j>i:
                 txt_args["color"] = "white"
             elif get_text_color != None:
                 txt_args["color"] = get_text_color(data[i][j])
@@ -28,14 +31,18 @@ def annotate_heatmap(im, data, format_string="{x:.2f}", text_params={}, symmetri
 # TODO: if matrix is symmetric, allow the choice of whether it should be upper
 # or lower diagonal
 # TODO: for now, the data is in RGB format and doesn't require a cmap
-def heatmap(ax, data, row_labels, col_labels, symmetric=False, **kwargs):
+def heatmap(ax, data, row_labels, col_labels, symmetric=False,
+        show_diagonal=True,**kwargs):
     size_x = data.shape[0]
     size_y = data.shape[1]
     def_data = None
 
     if symmetric:
         # k=1 keeps the diagonal, maybe should be put in parameters?
-        mask = np.triu(data, k=1)
+        k = 1
+        if not show_diagonal:
+            k = -1
+        mask = np.triu(data, k=k)
         def_data = np.ma.array(data, mask=mask)
     else:
         def_data = data
