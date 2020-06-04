@@ -29,10 +29,26 @@ def annotate_heatmap(im, data, format_string="{x:.2f}", text_params={}, symmetri
 # or lower diagonal
 # TODO: for now, the data is in RGB format and doesn't require a cmap
 def heatmap(ax, data, row_labels, col_labels, symmetric=False):
-    im = ax.imshow(data)
     size_x = data.shape[0]
     size_y = data.shape[1]
+    def_data = None
 
+    if symmetric:
+        cpy_data = []
+        white = [255, 255, 255]
+        for i in range(size_x):
+            row = []
+            for j in range(size_y):
+                if i>=j:
+                    row.append(data[i, j])
+                else:
+                    row.append(white)
+            cpy_data.append(row)
+        def_data = np.array(cpy_data)
+    else:
+        def_data = data
+
+    im = ax.imshow(def_data)
     ax.set_xticks(np.arange(size_x))
     ax.set_yticks(np.arange(size_y))
     ax.set_xticklabels(row_labels)
@@ -43,7 +59,6 @@ def heatmap(ax, data, row_labels, col_labels, symmetric=False):
     ax.tick_params(which="minor", bottom=False, left=False)
 
     plt.setp(ax.get_xticklabels(), rotation=45, rotation_mode="anchor", ha="right")
-
 
     ax.grid(which="minor", color="w", linestyle="-", linewidth=3)
     for edge, spine in ax.spines.items():
